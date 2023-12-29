@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import importlib
+import importlib.util
+import ctypes
+
 import sys
 
 from ctypes import (cdll,
@@ -10,7 +12,12 @@ from ctypes import (cdll,
 
 __version__ = '0.8.13'
 
-_scrypt = cdll.LoadLibrary(importlib.util.find_spec('_scrypt'))
+# Find the shared library file
+_scrypt_spec = importlib.util.find_spec('_scrypt')
+_scrypt_lib_path = _scrypt_spec.origin
+
+# Load the library
+_scrypt = ctypes.CDLL(_scrypt_lib_path)
 
 _scryptenc_buf_saltlen = _scrypt.exp_scryptenc_buf_saltlen
 _scryptenc_buf_saltlen.argtypes = [c_char_p,  # const uint_t  *inbuf
